@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MinusFlow — 160 Ads Planner</title>
+<title>WAbot — 160 Ads Planner</title>
 <style>
 :root{
   --bg:#0e0e12; --card:#17171d; --card2:#1e1e26; --line:#2a2a34;
@@ -123,9 +123,9 @@ footer.foot{text-align:center;color:var(--mut);font-size:12px;margin-top:26px;}
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <div class="logo">M−</div>
+      <div class="logo">W</div>
       <div>
-        <h1>MINUSFLOW — ADS PROGRESS DASHBOARD</h1>
+        <h1>WABOT — ADS PROGRESS DASHBOARD</h1>
         <p class="sub">160 ads · script → video → 4 platforms · tap a status pill to advance it</p>
       </div>
       <div class="overall-chip">
@@ -202,7 +202,7 @@ footer.foot{text-align:center;color:var(--mut);font-size:12px;margin-top:26px;}
   </section>
 </main>
 
-<footer class="foot">MinusFlow · 160 Ads Planner · progress auto-saves on this device</footer>
+<footer class="foot">WAbot · 160 Ads Planner · progress auto-saves on this device</footer>
 
 <script>
 "use strict";
@@ -514,7 +514,7 @@ document.getElementById("exportCsv").addEventListener("click",()=>{
   });
   const blob=new Blob([lines.join("\n")],{type:"text/csv"});
   const u=URL.createObjectURL(blob), link=document.createElement("a");
-  link.href=u; link.download="MinusFlow_160_Ads_Planner.csv"; link.click();
+  link.href=u; link.download="WAbot_160_Ads_Planner.csv"; link.click();
   setTimeout(()=>URL.revokeObjectURL(u),4000);
 });
 document.getElementById("resetAll").addEventListener("click",()=>{
