@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MinusFlow — 160 Ads Planner</title>
+<style>
+:root{
+  --bg:#0e0e12; --card:#17171d; --card2:#1e1e26; --line:#2a2a34;
+  --txt:#f2f2f5; --mut:#a7a7b3; --red:#e5323e; --red-d:#b71f28;
+  --amber:#f5a623; --green:#22c55e; --gray:#6b7280;
+  --r:14px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+  font-size:16px; line-height:1.45; padding-bottom:48px;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 14px;}
+header.top{
+  background:linear-gradient(180deg,#15151b,#0e0e12);
+  border-bottom:1px solid var(--line);
+  padding:18px 0 14px; position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(8px);
+}
+.brand{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.logo{
+  width:46px;height:46px;border-radius:12px;flex:0 0 auto;
+  background:linear-gradient(135deg,var(--red),var(--red-d));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:20px;color:#fff;letter-spacing:-1px;
+}
+h1{font-size:20px;margin:0;letter-spacing:.3px;}
+.sub{color:var(--mut);font-size:13px;margin:2px 0 0;}
+.overall-chip{
+  margin-left:auto; text-align:right; background:var(--card);
+  border:1px solid var(--line); border-radius:var(--r); padding:8px 14px;
+}
+.overall-chip .pct{font-size:24px;font-weight:800;color:var(--red);}
+.overall-chip .lbl{font-size:12px;color:var(--mut);}
+nav.tabs{display:flex;gap:8px;margin:14px 0 4px;flex-wrap:wrap;}
+nav.tabs button{
+  flex:1 1 auto; min-height:48px; font-size:15px; font-weight:700;
+  background:var(--card); color:var(--mut); border:1px solid var(--line);
+  border-radius:12px; cursor:pointer; padding:10px 12px;
+}
+nav.tabs button.on{background:var(--red);border-color:var(--red);color:#fff;}
+main{padding-top:10px;}
+section.tab{display:none;}
+section.tab.on{display:block; animation:fade .18s ease;}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0;}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px;
+}
+.card .k{font-size:13px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.card .v{font-size:30px;font-weight:800;margin:4px 0 8px;}
+.card .v small{font-size:15px;color:var(--mut);font-weight:600;}
+.bar{height:10px;background:#26262e;border-radius:99px;overflow:hidden;}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--red),#ff6b74);border-radius:99px;transition:width .3s;}
+.card.done .v{color:var(--green);}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:12px 0;}
+.panel h2{margin:0 0 10px;font-size:17px;}
+.panel h3{margin:14px 0 8px;font-size:15px;color:var(--mut);}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0;}
+.toolbar input[type=search],.toolbar select{
+  background:var(--card2);color:var(--txt);border:1px solid var(--line);
+  border-radius:10px;min-height:48px;padding:10px 12px;font-size:16px;
+}
+.toolbar input[type=search]{flex:2 1 200px;}
+.toolbar select{flex:1 1 150px;}
+.chk{display:flex;align-items:center;gap:8px;min-height:48px;font-size:15px;color:var(--mut);cursor:pointer;}
+.chk input{width:22px;height:22px;accent-color:var(--red);}
+.btn{
+  min-height:48px;padding:10px 16px;border-radius:10px;font-size:15px;font-weight:700;
+  border:1px solid var(--line);background:var(--card2);color:var(--txt);cursor:pointer;
+}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff;}
+.btn.ghost{background:transparent;}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card);}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:14px;}
+thead th{
+  background:#101016;color:#fff;text-align:left;padding:12px 10px;font-size:12px;
+  text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;white-space:nowrap;
+}
+tbody td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:middle;}
+tbody tr:hover td{background:#1a1a21;}
+td.n{font-weight:800;color:var(--mut);white-space:nowrap;}
+td.topic{font-weight:600;min-width:220px;}
+td.goal{color:var(--mut);font-size:13px;white-space:nowrap;}
+td.pillar{font-size:12px;color:var(--mut);white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis;}
+.pill{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-height:44px;min-width:96px;padding:8px 12px;border-radius:99px;
+  font-size:13px;font-weight:700;border:1px solid transparent;cursor:pointer;white-space:nowrap;
+}
+.pill.s0{background:#26262e;color:#c9c9d2;border-color:#34343e;}
+.pill.s1{background:rgba(245,166,35,.14);color:var(--amber);border-color:rgba(245,166,35,.5);}
+.pill.s2{background:rgba(34,197,94,.14);color:var(--green);border-color:rgba(34,197,94,.5);}
+.pill .dot{width:8px;height:8px;border-radius:99px;background:currentColor;}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0;}
+.guide{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;}
+.guide h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:8px;}
+.guide p{margin:6px 0;color:var(--mut);font-size:14px;}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0;}
+.flow .step{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-weight:700;font-size:14px;}
+.flow .arr{color:var(--red);font-weight:800;}
+.note{font-size:13px;color:var(--mut);margin:10px 0;}
+.empty{padding:30px;text-align:center;color:var(--mut);}
+footer.foot{text-align:center;color:var(--mut);font-size:12px;margin-top:26px;}
+@media (max-width:560px){
+  h1{font-size:17px;}
+  .overall-chip{margin-left:0;width:100%;display:flex;align-items:center;justify-content:space-between;}
+  .overall-chip .pct{font-size:20px;}
+  .card .v{font-size:26px;}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">M−</div>
+      <div>
+        <h1>MINUSFLOW — ADS PROGRESS DASHBOARD</h1>
+        <p class="sub">160 ads · script → video → 4 platforms · tap a status pill to advance it</p>
+      </div>
+      <div class="overall-chip">
+        <div><span class="pct" id="overallPct">0%</span></div>
+        <div class="lbl"><span id="overallDone">0</span> / 960 done</div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button data-tab="dashboard" class="on">📊 Dashboard</button>
+      <button data-tab="planner">📝 Ad Planner</button>
+      <button data-tab="guide">📖 Status Guide</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="tab-dashboard" class="tab on">
+    <div class="cards" id="stageCards"></div>
+    <div class="panel">
+      <h2>Per-pillar progress <span class="note">(done counts per stage)</span></h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Pillar</th><th>Ads</th><th>Script</th><th>Video</th><th>FB</th><th>TT</th><th>IG</th><th>LI</th></tr></thead>
+        <tbody id="pillarRows"></tbody>
+      </table></div>
+    </div>
+    <p class="note">Seed state matches the sheet: ad #1 script = Done (1%), everything else Pending. Progress saves automatically on this device.</p>
+  </section>
+
+  <section id="tab-planner" class="tab">
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search topic, pillar, or ad #…">
+      <select id="fPillar"><option value="">All pillars</option></select>
+      <label class="chk"><input type="checkbox" id="hideDone"> Hide fully-done ads</label>
+      <button class="btn" id="exportCsv">⬇ CSV</button>
+      <button class="btn ghost" id="resetAll">↺ Reset</button>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr>
+        <th>Ad #</th><th>Content Pillar</th><th>Ad Topic</th><th>Goal</th>
+        <th>Script</th><th>Video Ads</th><th>Facebook</th><th>TikTok</th><th>Instagram</th><th>LinkedIn</th>
+      </tr></thead>
+      <tbody id="adRows"></tbody>
+    </table></div>
+    <p class="note" id="countNote"></p>
+  </section>
+
+  <section id="tab-guide" class="tab">
+    <div class="panel">
+      <h2>How the tracker works</h2>
+      <div class="flow">
+        <span class="step">1 · Script</span><span class="arr">→</span>
+        <span class="step">2 · Video Ad</span><span class="arr">→</span>
+        <span class="step">3 · Facebook</span><span class="arr">→</span>
+        <span class="step">4 · TikTok</span><span class="arr">→</span>
+        <span class="step">5 · Instagram</span><span class="arr">→</span>
+        <span class="step">6 · LinkedIn</span>
+      </div>
+      <p class="note">Each ad moves through 6 stages = 960 checkboxes total. Tap any status pill in the planner to cycle it forward.</p>
+      <div class="guide-grid">
+        <div class="guide"><h3><span class="pill s0"><span class="dot"></span>Pending</span></h3>
+          <p>Not started yet. The default state for every new ad and stage.</p></div>
+        <div class="guide"><h3><span class="pill s1"><span class="dot"></span>In Progress</span></h3>
+          <p>Someone is actively working on it — script being written, video being edited, post being designed.</p></div>
+        <div class="guide"><h3><span class="pill s2"><span class="dot"></span>Done</span></h3>
+          <p>Finished and reviewed. For platform stages: the post is published live.</p></div>
+      </div>
+      <h3>Rules of thumb</h3>
+      <p class="note">· Mark <b>Script</b> done only when the final script is approved.<br>
+      · Mark <b>Video Ad</b> done when the rendered video is final.<br>
+      · Mark a platform done when that cut is <b>posted</b>, not just rendered.<br>
+      · Use search + pillar filter to run daily standups (“show me pillar 06, hide done”).<br>
+      · CSV export gives you the sheet-compatible file for backup or sharing.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">MinusFlow · 160 Ads Planner · progress auto-saves on this device</footer>
+
+<script>
+"use strict";
+/* ---------- DATA ---------- */
+const PILLARS=[
+ {n:"01",name:"WHATSAPP AUTOMATION ADS",goal:"WhatsApp automation"},
+ {n:"02",name:"AI CHATBOT ADS",goal:"AI chatbot"},
+ {n:"03",name:"LEAD GENERATION ADS",goal:"Lead generation"},
+ {n:"04",name:"SALES FUNNEL ADS",goal:"Sales funnels"},
+ {n:"05",name:"WEBSITE & DIGITAL PRESENCE ADS",goal:"Website + digital presence"},
+ {n:"06",name:"CONTENT & SOCIAL MEDIA ADS",goal:"Content + social automation"},
+ {n:"07",name:"SEO & GROWTH ADS",goal:"SEO + scalable growth"},
+ {n:"08",name:"PAID ADVERTISING ADS",goal:"Paid advertising"},
+ {n:"09",name:"EMAIL & RETENTION ADS",goal:"Email + retention"},
+ {n:"10",name:"BRANDING & AUTHORITY ADS",goal:"Brand authority"}
+];
+/* [adNo, pillarIndex, topic] — pillars 05/06/07 topics 61–96 copied verbatim from the sheet */
+const ADS=[
+[1,0,"Your WhatsApp can sell while you sleep"],
+[2,0,"Stop losing customers to slow replies"],
+[3,0,"Automate your WhatsApp inbox"],
+[4,0,"Turn chats into paying customers"],
+[5,0,"WhatsApp broadcasts that actually convert"],
+[6,0,"Never miss a lead on WhatsApp again"],
+[7,0,"Your business needs a WhatsApp system"],
+[8,0,"Manual replies are costing you sales"],
+[9,0,"A WhatsApp catalog that sells for you"],
+[10,0,"Follow up automatically on WhatsApp"],
+[11,0,"From first message to closed deal"],
+[12,0,"WhatsApp + CRM working together"],
+[13,0,"Recover abandoned carts on WhatsApp"],
+[14,0,"Book appointments via WhatsApp"],
+[15,0,"Why customers prefer WhatsApp over calls"],
+[16,1,"An AI employee that never sleeps"],
+[17,1,"Your website needs a 24/7 assistant"],
+[18,1,"Chatbots that actually understand customers"],
+[19,1,"Stop answering the same questions daily"],
+[20,1,"AI replies in your customer's language"],
+[21,1,"From visitor to lead, automatically"],
+[22,1,"Qualify leads while you focus on work"],
+[23,1,"AI support without the support team"],
+[24,1,"Smart replies, zero waiting time"],
+[25,1,"Turn FAQs into a conversion machine"],
+[26,1,"Chatbot + human handoff done right"],
+[27,1,"Why rule-based bots fail"],
+[28,1,"Train AI on your business data"],
+[29,1,"Reduce support tickets by 70%"],
+[30,1,"Deploy AI chat in days, not months"],
+[31,2,"Your pipeline is empty — fix it"],
+[32,2,"Leads on autopilot, every day"],
+[33,2,"Stop buying cold lead lists"],
+[34,2,"Attract buyers, not browsers"],
+[35,2,"Turn clicks into booked calls"],
+[36,2,"Lead magnets that actually convert"],
+[37,2,"The follow-up system you're missing"],
+[38,2,"Nurture leads without manual work"],
+[39,2,"Why your ads don't bring leads"],
+[40,2,"Landing pages built to capture"],
+[41,2,"Retargeting that brings them back"],
+[42,2,"Your CRM should chase leads for you"],
+[43,2,"Qualify before you call"],
+[44,2,"More leads, less ad spend"],
+[45,2,"Predictable leads every month"],
+[46,3,"Your funnel is leaking money"],
+[47,3,"From click to customer, mapped"],
+[48,3,"One funnel, every traffic source"],
+[49,3,"Stop sending traffic to your homepage"],
+[50,3,"The 3-step funnel that converts"],
+[51,3,"Upsells that feel like help"],
+[52,3,"Your checkout is killing sales"],
+[53,3,"Fix the drop-off points"],
+[54,3,"Funnels for service businesses"],
+[55,3,"High-ticket funnels explained"],
+[56,3,"Webinar funnels that fill seats"],
+[57,3,"Tripwire offers that work"],
+[58,3,"Your funnel needs email built in"],
+[59,3,"Track every step, fix every leak"],
+[60,3,"Scale winners, kill losers"],
+[61,4,"Your website is your digital salesperson"],
+[62,4,"Is your website converting visitors?"],
+[63,4,"Why beautiful websites still fail"],
+[64,4,"Website + automation = better business"],
+[65,4,"Turn your website into a business system"],
+[66,4,"AI-powered websites"],
+[67,4,"High-converting landing pages"],
+[68,4,"Business websites that actually work"],
+[69,4,"Website automation nobody talks about"],
+[70,4,"Your website shouldn't just look good"],
+[71,4,"Connect your website to your CRM"],
+[72,4,"Turn website leads into automated follow-ups"],
+[73,4,"Build a website around your business workflow"],
+[74,4,"Why your website needs automation"],
+[75,4,"From website to complete digital ecosystem"],
+[76,5,"Your business needs a content system"],
+[77,5,"Stop creating every post manually"],
+[78,5,"Automate your content pipeline"],
+[79,5,"AI content creation for businesses"],
+[80,5,"Turn one idea into 10 pieces of content"],
+[81,5,"Build a social media content machine"],
+[82,5,"Your content calendar can run automatically"],
+[83,5,"AI-assisted social media management"],
+[84,5,"Automate content repurposing"],
+[85,5,"Turn videos into social posts"],
+[86,5,"Create content faster with AI"],
+[87,5,"Content + automation = consistency"],
+[88,5,"Why businesses fail at consistency"],
+[89,5,"Your social media shouldn't depend on inspiration"],
+[90,5,"Build a content engine, not random posts"],
+[91,6,"Why your website isn't getting traffic"],
+[92,6,"SEO shouldn't be completely manual"],
+[93,6,"AI + SEO"],
+[94,6,"Automate your SEO workflow"],
+[95,6,"Build an SEO content engine"],
+[96,6,"Keyword research with AI"],
+[97,6,"Rank for what customers search"],
+[98,6,"Technical SEO on autopilot"],
+[99,6,"Content that ranks and converts"],
+[100,6,"Local SEO for service businesses"],
+[101,6,"Your competitors rank — why don't you"],
+[102,6,"SEO reports you'll actually read"],
+[103,6,"Link building without the grind"],
+[104,6,"From invisible to page one"],
+[105,6,"Compounding growth with SEO"],
+[106,7,"Your ad spend needs a system"],
+[107,7,"Stop boosting posts randomly"],
+[108,7,"Meta ads that target buyers"],
+[109,7,"Google ads for ready-to-buy traffic"],
+[110,7,"Retargeting every visitor"],
+[111,7,"Your creative is the targeting"],
+[112,7,"Test ads without burning budget"],
+[113,7,"Scale winners, kill losers fast"],
+[114,7,"Landing pages that match your ads"],
+[115,7,"Track ROAS, not just clicks"],
+[116,7,"TikTok ads for local businesses"],
+[117,7,"Your funnel behind every ad"],
+[118,7,"Ad account structure that scales"],
+[119,7,"Creative testing on autopilot"],
+[120,7,"From 2x to 5x ROAS"],
+[121,7,"Stop paying for the wrong clicks"],
+[122,7,"Audiences that actually buy"],
+[123,7,"Your offer before your ads"],
+[124,7,"Simplify: one campaign, one goal"],
+[125,7,"Ads + automation = growth loop"],
+[126,8,"Your list is an asset — use it"],
+[127,8,"Email that customers open"],
+[128,8,"Automate welcome sequences"],
+[129,8,"Win back lost customers"],
+[130,8,"Abandoned cart emails that recover"],
+[131,8,"Your newsletter should sell"],
+[132,8,"Segment, don't blast"],
+[133,8,"Post-purchase emails that upsell"],
+[134,8,"Re-engage cold subscribers"],
+[135,8,"Email + WhatsApp together"],
+[136,8,"Your CRM is a goldmine"],
+[137,8,"Ask for reviews automatically"],
+[138,8,"Referral emails that spread"],
+[139,8,"Retention beats acquisition"],
+[140,8,"Lifecycle emails on autopilot"],
+[141,8,"Stop losing customers silently"],
+[142,8,"Birthday offers that convert"],
+[143,8,"Your best customers buy again"],
+[144,8,"Build loyalty without discounts"],
+[145,8,"The backend is where profit hides"],
+[146,9,"Be the obvious choice"],
+[147,9,"Authority beats advertising"],
+[148,9,"Your story sells before you do"],
+[149,9,"Content that builds trust"],
+[150,9,"Be everywhere your buyer looks"],
+[151,9,"Personal brand for founders"],
+[152,9,"Testimonials that do the selling"],
+[153,9,"Case studies that close deals"],
+[154,9,"Own your niche"],
+[155,9,"From vendor to partner"],
+[156,9,"Your reputation, engineered"],
+[157,9,"Show the work, win the client"],
+[158,9,"Consistency builds brands"],
+[159,9,"Become the go-to expert"],
+[160,9,"Brands compound like interest"]
+];
+const STAGES=[
+ ["script","Script"],["video","Video Ads"],["fb","Facebook"],
+ ["tt","TikTok"],["ig","Instagram"],["li","LinkedIn"]
+];
+const SNAME=["Pending","In Progress","Done"];
+const LSKEY="mf_ads_v1";
+
+/* ---------- STATE ---------- */
+function seedStatus(){
+  const o={};
+  ADS.forEach(a=>{ o[a[0]]={script:0,video:0,fb:0,tt:0,ig:0,li:0}; });
+  o[1].script=2; /* matches sheet: 1/160 scripts done */
+  return o;
+}
+let status;
+try{
+  const raw=localStorage.getItem(LSKEY);
+  status=raw?JSON.parse(raw):seedStatus();
+  if(!status[1]) status=seedStatus();
+}catch(e){ status=seedStatus(); }
+function save(){ try{localStorage.setItem(LSKEY,JSON.stringify(status));}catch(e){} }
+function st(ad,key){ const r=status[ad]; return r? (r[key]||0):0; }
+
+/* ---------- TABS ---------- */
+document.querySelectorAll("nav.tabs button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("on"));
+    document.querySelectorAll("section.tab").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    document.getElementById("tab-"+b.dataset.tab).classList.add("on");
+  });
+});
+
+/* ---------- DASHBOARD ---------- */
+function renderDashboard(){
+  const wrap=document.getElementById("stageCards"); wrap.innerHTML="";
+  let totalDone=0;
+  STAGES.forEach(([key,label])=>{
+    let done=0;
+    ADS.forEach(a=>{ if(st(a[0],key)===2) done++; });
+    totalDone+=done;
+    const pct=Math.round(done/ADS.length*100);
+    const el=document.createElement("div");
+    el.className="card"+(done===ADS.length?" done":"");
+    el.innerHTML='<div class="k">'+label+'</div>'+
+      '<div class="v">'+done+'<small> / '+ADS.length+'</small></div>'+
+      '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="note" style="margin:6px 0 0">'+pct+'% complete</div>';
+    wrap.appendChild(el);
+  });
+  const opct=Math.round(totalDone/(ADS.length*STAGES.length)*100);
+  document.getElementById("overallPct").textContent=opct+"%";
+  document.getElementById("overallDone").textContent=totalDone;
+  const pr=document.getElementById("pillarRows"); pr.innerHTML="";
+  PILLARS.forEach((p,pi)=>{
+    const rows=ADS.filter(a=>a[1]===pi);
+    const cells=STAGES.map(([key])=>{
+      let d=0; rows.forEach(a=>{ if(st(a[0],key)===2) d++; });
+      return "<td>"+d+"</td>";
+    }).join("");
+    const tr=document.createElement("tr");
+    tr.innerHTML="<td class='pillar' style='max-width:none'>"+p.n+" — "+p.name+"</td><td class='n'>"+rows.length+"</td>"+cells;
+    pr.appendChild(tr);
+  });
+}
+
+/* ---------- PLANNER ---------- */
+const fPillar=document.getElementById("fPillar");
+PILLARS.forEach((p,pi)=>{
+  const o=document.createElement("option"); o.value=pi; o.textContent=p.n+" — "+p.name;
+  fPillar.appendChild(o);
+});
+function pillBtn(ad,key){
+  const v=st(ad,key);
+  const b=document.createElement("button");
+  b.className="pill s"+v;
+  b.innerHTML='<span class="dot"></span>'+SNAME[v];
+  b.setAttribute("aria-label","Ad "+ad+" "+key+" status: "+SNAME[v]+". Tap to advance.");
+  b.addEventListener("click",()=>{
+    status[ad][key]=(st(ad,key)+1)%3; save();
+    renderAll(false);
+  });
+  return b;
+}
+function renderPlanner(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const fp=fPillar.value, hideDone=document.getElementById("hideDone").checked;
+  const tb=document.getElementById("adRows"); tb.innerHTML="";
+  let shown=0;
+  ADS.forEach(a=>{
+    const [n,pi,topic]=a, p=PILLARS[pi];
+    if(fp!=="" && +fp!==pi) return;
+    if(q && !(topic.toLowerCase().includes(q)||p.name.toLowerCase().includes(q)||String(n)===q)) return;
+    const allDone=STAGES.every(([k])=>st(n,k)===2);
+    if(hideDone && allDone) return;
+    shown++;
+    const tr=document.createElement("tr");
+    const tds=[
+      "<td class='n'>"+n+"</td>",
+      "<td class='pillar' title='"+p.n+" — "+p.name+"'>"+p.n+" — "+p.name+"</td>",
+      "<td class='topic'>"+escapeHtml(topic)+"</td>",
+      "<td class='goal'>"+p.goal+"</td>"
+    ].join("");
+    tr.innerHTML=tds;
+    STAGES.forEach(([key])=>{
+      const td=document.createElement("td");
+      td.appendChild(pillBtn(n,key));
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  document.getElementById("countNote").textContent=
+    shown===ADS.length ? "Showing all 160 ads." : "Showing "+shown+" of 160 ads (filtered).";
+  if(!shown) tb.innerHTML="<tr><td colspan='10'><div class='empty'>No ads match the filter.</div></td></tr>";
+}
+function escapeHtml(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+["q","fPillar","hideDone"].forEach(id=>{
+  document.getElementById(id).addEventListener(id==="q"?"input":"change",()=>renderPlanner());
+});
+
+/* ---------- CSV EXPORT ---------- */
+document.getElementById("exportCsv").addEventListener("click",()=>{
+  const head=["AD #","CONTENT PILLAR","AD TOPIC","GOAL","SCRIPT","VIDEO ADS","FACEBOOK","TIKTOK","INSTAGRAM","LINKEDIN"];
+  const lines=[head.join(",")];
+  ADS.forEach(a=>{
+    const [n,pi,topic]=a, p=PILLARS[pi];
+    const row=[n,'"'+p.n+" - "+p.name.replace(/"/g,'""')+'"','"'+topic.replace(/"/g,'""')+'"','"'+p.goal+'"']
+      .concat(STAGES.map(([k])=>SNAME[st(n,k)]));
+    lines.push(row.join(","));
+  });
+  const blob=new Blob([lines.join("\n")],{type:"text/csv"});
+  const u=URL.createObjectURL(blob), link=document.createElement("a");
+  link.href=u; link.download="MinusFlow_160_Ads_Planner.csv"; link.click();
+  setTimeout(()=>URL.revokeObjectURL(u),4000);
+});
+document.getElementById("resetAll").addEventListener("click",()=>{
+  if(confirm("Reset all 160 ads to the seed state (ad #1 script Done, rest Pending)?")){
+    status=seedStatus(); save(); renderAll(false);
+  }
+});
+
+/* ---------- INIT ---------- */
+function renderAll(resetFilters){
+  if(resetFilters){
+    document.getElementById("q").value=""; fPillar.value="";
+    document.getElementById("hideDone").checked=false;
+  }
+  renderDashboard(); renderPlanner();
+}
+renderAll(true);
+</script>
+</body>
+</html>
